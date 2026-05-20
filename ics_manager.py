@@ -1,5 +1,5 @@
 from tkinter import filedialog
-from datetime import datetime
+from datetime import datetime, timezone
 import database
 
 
@@ -27,23 +27,26 @@ def import_ics(tasktree, calendar, calendar_events):
             dtend = event_data.get("DTEND")
 
             if dtstart and dtend:
-                dtstart = dtstart.replace("Z", "")
-                dtend = dtend.replace("Z", "")
-
-                start_datetime = datetime.strptime(dtstart, "%Y%m%dT%H%M%S").strftime(
-                    "%Y-%m-%d %H:%M:%S"
+                # UTC parsing
+                start_datetime = datetime.strptime(dtstart, "%Y%m%dT%H%M%SZ").replace(
+                    tzinfo=timezone.utc
+                )
+                end_datetime = datetime.strptime(dtend, "%Y%m%dT%H%M%SZ").replace(
+                    tzinfo=timezone.utc
                 )
 
-                due_datetime = datetime.strptime(dtend, "%Y%m%dT%H%M%S").strftime(
+                # Make into local time only
+                start_datetime = start_datetime.astimezone().strftime(
                     "%Y-%m-%d %H:%M:%S"
                 )
-
+                end_datetime = end_datetime.astimezone().strftime("%Y-%m-%d %H:%M:%S")
                 database.add_task(
                     title,
                     description,
                     start_datetime,
-                    due_datetime,
+                    end_datetime,
                 )
+
         elif inside_event:
             if ":" in line:
                 key, value = line.split(":", 1)

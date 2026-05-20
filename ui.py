@@ -455,6 +455,7 @@ def edit_selected_task(
     submit.grid(column=0, row=8, pady=20)
 
 
+# select the first task in the list automatically (mostly for keyboard navigation)
 def first_task_select(tasktree):
     child = tasktree.get_children()
 
