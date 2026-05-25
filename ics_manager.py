@@ -3,6 +3,16 @@ from datetime import datetime, timezone
 import database
 
 
+# Parser for if the .ics file uses the Z formatting
+def parse_datetime(v):
+    v = v.strip()
+
+    if v.endswith("Z"):
+        return datetime.strptime(v, "%Y%m%dT%H%M%SZ").strftime("%Y-%m-%d %H:%M:%S")
+
+    return datetime.strptime(v, "%Y%m%dT%H%M%S").strftime("%Y-%m-%d %H:%M:%S")
+
+
 def import_ics(tasktree, calendar, calendar_events):
     file_path = filedialog.askopenfilename(
         filetypes=[("ICS files", "*.ics"), ("All files", "*.*")]
@@ -28,18 +38,9 @@ def import_ics(tasktree, calendar, calendar_events):
 
             if dtstart and dtend:
                 # UTC parsing
-                start_datetime = datetime.strptime(dtstart, "%Y%m%dT%H%M%SZ").replace(
-                    tzinfo=timezone.utc
-                )
-                end_datetime = datetime.strptime(dtend, "%Y%m%dT%H%M%SZ").replace(
-                    tzinfo=timezone.utc
-                )
+                start_datetime = parse_datetime(dtstart)
+                end_datetime = parse_datetime(dtend)
 
-                # Make into local time only
-                start_datetime = start_datetime.astimezone().strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                end_datetime = end_datetime.astimezone().strftime("%Y-%m-%d %H:%M:%S")
                 database.add_task(
                     title,
                     description,
@@ -51,7 +52,6 @@ def import_ics(tasktree, calendar, calendar_events):
             if ":" in line:
                 key, value = line.split(":", 1)
                 event_data[key] = value
-    print("Import complete")
 
     import ui
 
