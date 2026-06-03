@@ -275,7 +275,6 @@ def create_display(root, tasktree, calendar, calendar_events, width=600, height=
     date_entry.grid(column=1, row=4, padx=(20, 0), columnspan=3, rowspan=3)
 
     def submit_handler():
-        print("Submitted")
         hours = int(hour.get())
         minutes = int(minute.get())
         ampms = ampm.get()
