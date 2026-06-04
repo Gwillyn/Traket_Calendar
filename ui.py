@@ -220,9 +220,6 @@ def settings_display(root, tasktree, calendar, calendar_events, width=600, heigh
     )
     export_button.grid(column=0, row=2, padx=20)
 
-    theme_button = ttk.Button(settings_pop, text="Theme")
-    theme_button.grid(column=1, row=1, padx=20, pady=(10, 40))
-
 
 def create_display(root, tasktree, calendar, calendar_events, width=600, height=600):
     create_pop = popup_window(root, "Create Task", width, height)
